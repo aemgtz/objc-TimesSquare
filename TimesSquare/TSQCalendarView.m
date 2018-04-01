@@ -162,17 +162,14 @@
   [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:section] atScrollPosition:UITableViewScrollPositionTop animated:animated];
 }
 
-
-
-- (void)scrollDate:(NSDate *)date toPosition:(UITableViewScrollPosition)position animated:(BOOL)animated {
-    NSIndexPath *cellPath = [self indexPathForRowAtDate:date];
-
-    [self.tableView scrollToRowAtIndexPath:cellPath
-                          atScrollPosition:position
-                                  animated:animated];
+- (BOOL)shouldDisplayEventMarkerForDate:(NSDate *)date;
+{
+    if ([self.delegate respondsToSelector:@selector(calendarView:shouldDisplayEventMarkerForDate:)]) {
+        return [self.delegate calendarView:self shouldDisplayEventMarkerForDate:date];
+    }
+    
+    return NO;
 }
-
-
 
 - (TSQCalendarMonthHeaderCell *)makeHeaderCellWithIdentifier:(NSString *)identifier;
 {
@@ -206,13 +203,14 @@
     if (!date) {
         return nil;
     }
-    
+
     NSInteger section = [self sectionForDate:date];
     NSDate *firstOfMonth = [self firstOfMonthForSection:section];
-    
-    NSInteger firstWeek = [self.calendar components:NSWeekOfMonthCalendarUnit fromDate:firstOfMonth].weekOfMonth;
-    NSInteger targetWeek = [self.calendar components:NSWeekOfMonthCalendarUnit fromDate:date].weekOfMonth;
-    
+    NSInteger firstWeek = [self.calendar components:NSWeekOfYearCalendarUnit fromDate:firstOfMonth].weekOfYear;
+    NSInteger targetWeek = [self.calendar components:NSWeekOfYearCalendarUnit fromDate:date].weekOfYear;
+    if (targetWeek < firstWeek) {
+        targetWeek = [self.calendar maximumRangeOfUnit:NSWeekOfYearCalendarUnit].length;
+    }
     return [NSIndexPath indexPathForRow:(self.pinsHeaderToTop ? 0 : 1) + targetWeek - firstWeek inSection:section];
 }
 

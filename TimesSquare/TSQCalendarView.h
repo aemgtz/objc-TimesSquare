@@ -104,15 +104,14 @@
  */
 - (void)scrollToDate:(NSDate *)date animated:(BOOL)animated;
 
-
-
-/** Scrolls the receiver until the specified date is at the specified position in the view.
-
-@param date A date that identifies the month that will be visible.
-@param position A UITableViewScroll Position, determining the position of the date after scroll is finished.
-@param animated YES if you want to animate the change in position, NO if it should be immediate.
-*/
-- (void)scrollDate:(NSDate *)date toPosition:(UITableViewScrollPosition)position animated:(BOOL)animated;
+/** Whether a particular date should display an event marker
+ 
+ This method passes straight through to the delegate
+ 
+ @param date The date being displayed.
+ @return Whether or not the date should display an event marker.
+ */
+- (BOOL)shouldDisplayEventMarkerForDate:(NSDate *)date;
 
 @end
 
@@ -140,5 +139,15 @@
  @param date Midnight on the date being selected.
  */
 - (void)calendarView:(TSQCalendarView *)calendarView didSelectDate:(NSDate *)date;
+
+/** @name Displaying event markers */
+
+/** Asks the delegate whether a particular date should display an event marker
+ 
+ @param calendarView The calendar view that is displaying a date.
+ @param date The date being displayed.
+ @return Whether or not the date should display an event marker.
+ */
+- (BOOL)calendarView:(TSQCalendarView *)calendarView shouldDisplayEventMarkerForDate:(NSDate *)date;
 
 @end
